@@ -14,6 +14,8 @@ def main():
 
     args = parser.parse_args()
 
+    print('Build ensemble features from existing model outputs')
+
     df_train_data = pd.read_csv(args.train_input)
     target_col = df_train_data.columns[2]
     df_target = df_train_data[target_col]
@@ -27,8 +29,8 @@ def main():
     df_train_en_feature_target.columns = feature_names + [target_col]
     df_test_en_feature.columns = feature_names
 
-    df_train_en_feature_target.to_csv(args.train_en_feature, index=False)
-    df_test_en_feature.to_csv(args.test_en_feature, index=False)
+    df_train_en_feature_target.to_csv(args.train_en_feature, index=False, header=True)
+    df_test_en_feature.to_csv(args.test_en_feature, index=False, header=True)
 
 if __name__ == '__main__':
     main()

@@ -17,6 +17,8 @@ def main():
 
     args = parser.parse_args()
 
+    print('Prepare the submit file')
+
     df_test_data = pd.read_csv(args.test_input)
     df_test_pred = pd.read_csv(args.test_pred)
 
@@ -28,7 +30,7 @@ def main():
 
     df_test_submit = pd.concat([df_test_data[id_col], df_test_pred], axis=1)
     df_test_submit.columns = [id_col, target_col]
-    df_test_submit.to_csv(args.test_submit, index=False)
+    df_test_submit.to_csv(args.test_submit, index=False, header=True)
 
 if __name__ == '__main__':
     main()
