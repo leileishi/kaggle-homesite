@@ -54,7 +54,7 @@ def main():
 
     # Model specification and parameter range
     model = RandomForestClassifier()
-    parameters = [{'n_estimators': [10, 50, 100, 200]}]
+    parameters = [{'n_estimators': [200, 100, 50, 10]}]
 
     # Cross validation search
     print('Cross validation search')
