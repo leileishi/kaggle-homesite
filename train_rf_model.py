@@ -58,7 +58,8 @@ def main():
 
     # Cross validation search
     print('Cross validation search')
-    clf = GridSearchCV(model, parameters, cv=5, scoring='roc_auc', n_jobs=args.cores, pre_dispatch=args.cores)
+    clf = GridSearchCV(model, parameters, 
+        cv=5, scoring='roc_auc', n_jobs=args.cores, pre_dispatch=args.cores, verbose=3)
     clf.fit(train_X, train_y)
 
     # Make predictions with the best model
