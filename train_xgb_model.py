@@ -9,7 +9,7 @@ import sklearn
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
-from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
 
 def main():
     model_name = 'Radom Forest'
@@ -37,7 +37,8 @@ def main():
     test_X = df_test_feature.values
 
     # Model specification and parameter range
-    model = RandomForestClassifier(n_jobs=-1)
+    model = XGBClassifier(max_depth=10, learning_rate=0.025, silent=True, 
+        subsample=0.8, colsample_bytree=0.8, nthread=-1)
     parameters = [{'n_estimators': [200, 100, 50, 25, 10]}]
 
     # Cross validation search

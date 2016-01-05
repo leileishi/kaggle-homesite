@@ -84,6 +84,10 @@ def main():
                       df_features[int_cols + float_cols], 
                       df_target] 
 
+    # Remove all commas in column names just to be safe
+    for df in train_test_dfs: 
+        df.columns = map(lambda c: c.replace(',', ''), df.columns)
+
     # Split feature data into training set and test set
     # df_train_test_feature_target = pd.concat(train_test_dfs, axis=1)
     # df_train_test_feature_target.iloc[:train_test_split,:].to_csv(args.train_feature, index=False)

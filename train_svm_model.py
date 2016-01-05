@@ -6,27 +6,11 @@ import numpy as np
 import pandas as pd
 
 import sklearn
+from sklearn.preprocessing import StandardScaler
 from sklearn.grid_search import GridSearchCV
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
 from sklearn.svm import SVC
-from sklearn.preprocessing import StandardScaler
-
-# A memory effcient way to load CSV data
-def iter_loadtxt(filename, delimiter=',', skiprows=0, dtype=float):
-    def iter_func():
-        with open(filename, 'r') as infile:
-            for _ in range(skiprows):
-                next(infile)
-            for line in infile:
-                line = line.rstrip().split(delimiter)
-                for item in line:
-                    yield dtype(item)
-        iter_loadtxt.rowlength = len(line)
-
-    data = np.fromiter(iter_func(), dtype=dtype)
-    data = data.reshape((-1, iter_loadtxt.rowlength))
-    return data
 
 def main():
     model_name = 'Support Vector Machine'
@@ -46,15 +30,15 @@ def main():
 
     # Read training data and test data
     print('Read training data and test data')
-    df_train_feature_target = iter_loadtxt(args.train_feature, dtype=np.float32, delimiter=',', skiprows=1)
-    df_test_feature = iter_loadtxt(args.test_feature, dtype=np.float32, delimiter=',', skiprows=1)
+    df_train_feature_target = pd.read_csv(args.train_feature, dtype=np.float32)
+    df_test_feature = pd.read_csv(args.test_feature, dtype=np.float32)
 
-    train_X = df_train_feature_target[:,:-1]
-    train_y = df_train_feature_target[:,-1]
-    test_X = df_test_feature
+    train_X = df_train_feature_target.values[:,:-1]
+    train_y = df_train_feature_target.values[:,-1]
+    test_X = df_test_feature.values
 
-    # Normalise train data and test data
-    scaler = StandardScaler()
+    # Normalise training data and test data
+    scaler = StandardScaler(copy=False)
     scaler.fit(train_X)
     train_X = scaler.transform(train_X)
     test_X = scaler.transform(test_X)
