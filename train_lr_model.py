@@ -18,7 +18,6 @@ def main():
 
     parser.add_argument("train_feature", help="Input file of training features and target")
     parser.add_argument("test_feature", help="Input file of test features")
-    parser.add_argument("train_pred", help="Output file of predicted training target")
     parser.add_argument("test_pred", help="Output file of predicted test target")
     parser.add_argument("--prob", action='store_true', help='Predict probability of class 1')
     parser.add_argument("--cores", type=int, default=-1, help='Number of cores to use')
@@ -37,7 +36,7 @@ def main():
     test_X = df_test_feature.values
 
     # Model specification and parameter range
-    model = LogisticRegression(solver='lbfgs', penalty='l2')
+    model = LogisticRegression(solver='lbfgs', penalty='l2', n_jobs=-1)
     parameters = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000] }
 
     # Cross validation search
@@ -55,20 +54,19 @@ def main():
 
     # Write out the prediction result
     print('Write out the prediction result')
-    pd.Series(train_pred_prob if args.prob else train_pred , name='Prob' if args.prob else 'Pred') \
-        .to_csv(args.train_pred, index=False, header=True)
     pd.Series(test_pred_prob  if args.prob else test_pred, name='Prob' if args.prob else 'Pred') \
         .to_csv(args.test_pred, index=False, header=True)
 
     # Report the result
     print('Report the result')
+    print('Best Score: ', clf.best_score_)
+    print('Best Parameter: ', clf.best_params_)
+    print('Parameter Scores: ', clf.grid_scores_)
+    print('Model: ', clf)
     print('Accuracy: ', accuracy_score(train_y, train_pred))
     print('F1:       ', f1_score(train_y, train_pred))
     print('ROC AUC:  ', roc_auc_score(train_y, train_pred_prob))
-    print('Model: ', clf)
-    print('Best Parameter: ', clf.best_params_)
-    print('Best Score: ', clf.best_score_)
-    print('Parameter Scores: ', clf.grid_scores_)
+    print(args.test_pred + '~~' + str(clf.best_score_))
 
 if __name__ == '__main__':
     main()
