@@ -3,11 +3,11 @@
 date > log.txt
 
 ./build_features.py data/train.csv data/test.csv data/train_feature.csv data/test_feature.csv
-./train_lr_model.py data/train_feature.csv data/test_feature.csv models/lr.csv --prob --cores 1 >> log.txt
-./train_rf_model.py data/train_feature.csv data/test_feature.csv models/rf.csv --prob --cores 1 >> log.txt
-./train_ada_model.py data/train_feature.csv data/test_feature.csv models/ada.csv --prob --cores 1 >> log.txt
-./train_gbc_model.py data/train_feature.csv data/test_feature.csv models/gbc.csv --prob --cores 1 >> log.txt
-./train_xgb_model.py data/train_feature.csv data/test_feature.csv models/xgb.csv --prob --cores 1 >> log.txt
+unbuffer ./train_lr_model.py data/train_feature.csv data/test_feature.csv models/lr.csv --prob --cores 1 | tee -a log.txt
+unbuffer ./train_rf_model.py data/train_feature.csv data/test_feature.csv models/rf.csv --prob --cores 1 | tee -a log.txt
+unbuffer ./train_ada_model.py data/train_feature.csv data/test_feature.csv models/ada.csv --prob --cores 1 | tee -a log.txt
+unbuffer ./train_gbc_model.py data/train_feature.csv data/test_feature.csv models/gbc.csv --prob --cores 1 | tee -a log.txt
+unbuffer ./train_xgb_model.py data/train_feature.csv data/test_feature.csv models/xgb.csv --prob --cores 1 | tee -a log.txt
 
 rm models/models.csv
 echo "Model,Weight" > models/models.csv
