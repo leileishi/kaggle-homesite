@@ -36,7 +36,7 @@ def main():
     test_X = df_test_feature.values
 
     # Model specification and parameter range
-    model = GradientBoostingClassifier(loss="exponential", max_depth=10, learning_rate=0.025)
+    model = GradientBoostingClassifier(loss="deviance", max_depth=10, learning_rate=0.1)
     parameters = [{'n_estimators': [200, 100, 50, 25, 10]}]
 
     # Cross validation search
