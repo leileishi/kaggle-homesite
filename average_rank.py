@@ -22,7 +22,7 @@ def main():
     model_list = pd.read_csv(args.model_list)
     models = map(lambda m: pd.read_csv(m), model_list.Model)
     ranks = map(lambda m: m.values.T[0].argsort().argsort(), models)
-    mean_ranks = map(lambda r: weighted_gmean(r, model_list.Weight.values), zip(ranks))
+    mean_ranks = map(lambda r: weighted_gmean(r, model_list.Weight.values), zip(*ranks))
     norm_ranks = mean_ranks/max(mean_ranks)
 
     pd.Series(norm_ranks, name='Prob').to_csv(args.test_pred, index=False, header=True)
