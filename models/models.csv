@@ -1,0 +1,5 @@
+Model,Weight
+models/rf.csv,0.955473748399
+models/ada.csv,0.958935910846
+models/gbc_20_full.csv,0.959778563078
+models/gbc_200_15k.csv,0.962120648859
