@@ -15,6 +15,7 @@ from sklearn.preprocessing import StandardScaler
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation
 from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping
 
 def main():
     model_name = 'Neural Network'
@@ -44,26 +45,28 @@ def main():
 
     # Normalise train data and test data
     print('Normalise training data and test data')
-    scaler = StandardScaler()
+    scaler = StandardScaler(copy=False)
     scaler.fit(train_X)
     train_X = scaler.transform(train_X)
     test_X = scaler.transform(test_X)
 
     # NN Model specification
-    print('Build neural network')
-    model = Sequential()
-    model.add(Dense(100, input_dim=len(train_X[0]), init='uniform'))
-    model.add(Activation('tanh'))
-    model.add(Dropout(0.5))
-    model.add(Dense(50, init='uniform'))
-    model.add(Activation('tanh'))
-    model.add(Dropout(0.5))
-    model.add(Dense(2, init='uniform'))
-    model.add(Activation('softmax'))
+    def build_model():
+        print('Build neural network')
+        model = Sequential()
+        model.add(Dense(100, input_dim=len(train_X[0]), init='uniform'))
+        model.add(Activation('tanh'))
+        model.add(Dropout(0.5))
+        model.add(Dense(50, init='uniform'))
+        model.add(Activation('tanh'))
+        model.add(Dropout(0.5))
+        model.add(Dense(2, init='uniform'))
+        model.add(Activation('softmax'))
 
-    adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
-    model.compile(loss='mean_squared_error', optimizer=adam)
-    clf = model
+        adam = Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
+        model.compile(loss='mse', optimizer=adam)
+
+        return model
 
     # Cross validation
     print('Cross validation')
@@ -82,9 +85,11 @@ def main():
         valid_yy = train_y[valid]
 
         print("Training model...")
-        model.fit(train_xx, train_yy, validation_data=(valid_xx, valid_yy), 
-            nb_epoch=100, batch_size=100, show_accuracy=True, verbose=1)
-        valid_preds = model.predict_proba(valid_xx, verbose=0)
+        clf = build_model()
+        clf.fit(train_xx, train_yy, validation_data=(valid_xx, valid_yy), 
+            callbacks=[EarlyStopping(patience=5)], 
+            nb_epoch=100, batch_size=1000, show_accuracy=True, verbose=2)
+        valid_preds = clf.predict_proba(valid_xx, verbose=0)
         valid_preds = valid_preds[:,1]
         score = roc_auc_score(valid_yy[:,1], valid_preds)
         print("ROC AUC:", score)
@@ -93,7 +98,10 @@ def main():
 
     # Train the full model
     print('Train the full model')
-    clf.fit(train_X, train_y, nb_epoch=100, batch_size=100, show_accuracy=True, verbose=1)
+    clf = build_model()
+    clf.fit(train_X, train_y, 
+        callbacks=[EarlyStopping(patience=5)], 
+        nb_epoch=100, batch_size=1000, show_accuracy=True, verbose=2)
 
     # Make predictions with the full model
     test_pred = clf.predict(test_X)
