@@ -7,6 +7,7 @@ unbuffer ./train_rf_model.py data/train_feature.csv data/test_feature.csv models
 unbuffer ./train_ada_model.py data/train_feature.csv data/test_feature.csv models/ada.csv --prob --cores 1 | tee -a log.txt
 unbuffer ./train_gbc_model.py data/train_feature.csv data/test_feature.csv models/gbc.csv --prob --cores 1 | tee -a log.txt
 unbuffer ./train_xgb_model.py data/train_feature.csv data/test_feature.csv models/xgb.csv --prob --cores 1 | tee -a log.txt
+unbuffer ./train_nn_model.py data/train_feature.csv data/test_feature.csv models/nn.csv --prob --cores 1 | tee -a log.txt
 
 rm models/models.csv
 echo "Model,Weight" > models/models.csv
